@@ -13,7 +13,12 @@ class ProductDecodeException(Exception):
 
 
 class Game:
-    def __init__(self, title: str, description: str, price: int, product_url: str, thumbnail_url: (str | None)) -> None:
+    def __init__(self,
+                 title: str,
+                 description: str,
+                 price: int,
+                 product_url: str,
+                 thumbnail_url: (str | None)) -> None:
         self.title = title
         self.description = description
         self.price = price
@@ -22,7 +27,8 @@ class Game:
         self.thumbnail_url = thumbnail_url
 
     def display(self):
-        print(f"{self.title}\n{self.description}\n{self.product_url}\n{self.thumbnail_url}")
+        print(f"{self.title}\n{self.description}\n{
+              self.product_url}\n{self.thumbnail_url}")
 
 
 def get_title_of_product(product) -> str:
@@ -38,10 +44,11 @@ def get_title_of_product(product) -> str:
     else:
         raise ProductDecodeException("Invalid product input")
 
+
 def get_price_of_product(product) -> int:
     try:
         price_found = product["price"]["totalPrice"]["discountPrice"]
-        if(isinstance(price_found, int)):
+        if (isinstance(price_found, int)):
             return price_found
         else:
             raise ProductDecodeException("Price data malformed")
@@ -50,18 +57,25 @@ def get_price_of_product(product) -> int:
     except TypeError:
         raise ProductDecodeException("Invalid product input")
 
+
 def get_thumbnail_of_product(product):
     try:
         images = product["keyImages"]
         for image in images:
             if image["type"] == "Thumbnail":
-                return image["url"]
+                image_found = image["url"]
+                if (isinstance(image_found, str)):
+                    return image_found
+                else:
+                    continue
             else:
                 continue
         return None
-    except IndexError:
+    except KeyError:
         logging.info("Could not find images in product data")
         return None
+    except TypeError:
+        raise ProductDecodeException("Invalid product input")
 
 
 def get_possible_free_products(json_data):
@@ -74,8 +88,10 @@ def get_possible_free_products(json_data):
 
 
 """Extract the description of the product from the product dictionary"""
+
+
 def get_description_of_product(product) -> str:
-    if  isinstance(product, dict):
+    if isinstance(product, dict):
         try:
             description_found = product["description"]
             if isinstance(description_found, str):
@@ -83,9 +99,11 @@ def get_description_of_product(product) -> str:
             else:
                 raise ProductDecodeException("Description value is invalid")
         except KeyError:
-            raise ProductDecodeException("Description does not exist in product")
+            raise ProductDecodeException(
+                "Description does not exist in product")
     else:
         raise ProductDecodeException("Invalid product input")
+
 
 def get_product_url(product):
     try:
@@ -96,7 +114,8 @@ def get_product_url(product):
 
 def decode_product(product):
     try:
-        # title, description, price->totalPrice->discountPrice, offerMappings->0->pageSlug,
+        # title, description,
+        # price->totalPrice->discountPrice, offerMappings->0->pageSlug,
         # keyImages->(Where type=Thumbnail)
         title = get_title_of_product(product)
         description = get_description_of_product(product)
@@ -135,4 +154,5 @@ class EpicFreeGames:
             except requests.JSONDecodeError as err:
                 logging.warning(f"Convert to json failed with: {err}")
         else:
-            logging.warning(f"Request failed with code: {response.status_code}")
+            logging.warning(f"Request failed with code: {
+                            response.status_code}")
