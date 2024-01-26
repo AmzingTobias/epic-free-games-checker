@@ -30,6 +30,7 @@ class Game:
 
 
 def get_title_of_product(product) -> str:
+    """Get the title of a product from product data"""
     if isinstance(product, dict):
         try:
             title_found = product["title"]
@@ -44,6 +45,7 @@ def get_title_of_product(product) -> str:
 
 
 def get_price_of_product(product) -> int:
+    """Get the price of a product from product data"""
     try:
         price_found = product["price"]["totalPrice"]["discountPrice"]
         if (isinstance(price_found, int)):
@@ -57,6 +59,7 @@ def get_price_of_product(product) -> int:
 
 
 def get_thumbnail_of_product(product):
+    """Get the thumbnail of a product, if it exists, from product data"""
     try:
         images = product["keyImages"]
         for image in images:
@@ -77,6 +80,7 @@ def get_thumbnail_of_product(product):
 
 
 def get_products_from_response(json_data):
+    """Get the products from the response of a request"""
     if isinstance(json_data, dict):
         try:
             # Access free games by looking in
@@ -93,6 +97,7 @@ def get_products_from_response(json_data):
 
 
 def get_description_of_product(product) -> str:
+    """Get the description of a product from product data"""
     if isinstance(product, dict):
         try:
             description_found = product["description"]
@@ -108,6 +113,7 @@ def get_description_of_product(product) -> str:
 
 
 def get_product_url(product):
+    """Get the url of a product from product data"""
     URL_FIELD_KEY = "offerMappings"
     try:
         url_found = product["offerMappings"][0]["pageSlug"]
@@ -124,6 +130,7 @@ def get_product_url(product):
 
 
 def decode_product(product):
+    """Convert raw product data into a Game object"""
     try:
         # title, description,
         # price->totalPrice->discountPrice, offerMappings->0->pageSlug,
@@ -139,17 +146,18 @@ def decode_product(product):
         return None
 
 
-def process_products(products):
-    free_games: list[Game] = []
+def process_products(products) -> list[Game]:
+    """Decode a list of products and return a list of free games"""
     try:
+        free_games: list[Game] = []
         for product in products:
             game_decoded = decode_product(product)
             if game_decoded is not None and game_decoded.free:
                 logging.info(f"{game_decoded.title} is free")
                 free_games.append(game_decoded)
+        return free_games
     except TypeError:
         raise ProductDecodeException("Products list invalid")
-    return free_games
 
 
 class EpicFreeGames:
@@ -159,6 +167,7 @@ class EpicFreeGames:
         self.URL_FOR_CHECK = "https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=en-US&country=GB&allowCountries=GB"
 
     def make_request(self):
+        """Make a request to epic games API and discover free games"""
         response = requests.get(self.URL_FOR_CHECK)
         if response.ok:
             try:
