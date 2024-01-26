@@ -142,3 +142,58 @@ class TestProductURL:
         with pytest.raises(product_decode.ProductDecodeException):
             sample_data = {"offerMappings": [{"pageSlug": 2}, {"pageSlug": "url2"}]}
             product_decode.get_product_url(sample_data)
+
+
+class TestDecodeProduct:
+    """Test cases for the decode_product function."""
+
+    def test_valid_product_returns_game(self):
+        """Test that passing valid product will return a game."""
+        test_valid_product = {
+            "title": "title",
+            "description": "description",
+            "price": {"totalPrice": {"discountPrice": 1000}},
+            "offerMappings": [{"pageSlug": "url1"}, {"pageSlug": "url2"}],
+            "keyImages": [
+                {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]
+        }
+        game = product_decode.decode_product(test_valid_product)
+        assert isinstance(game, product_decode.Game)
+        assert game.title == "title"
+        assert game.description == "description"
+        assert game.product_url == "url1"
+        assert game.price == 1000
+        assert game.thumbnail_url == "valid"
+
+    def test_invalid_product_data_type_returns_none(self):
+        """Test that passing invalid data will return None."""
+        game = product_decode.decode_product(None)
+        assert game is None
+
+    def test_product_missing_field_returns_none(self):
+        """Test that passing a product with a missing key field will return None."""
+        missing_field_product = {
+            "title": "title",
+            "price": {"totalPrice": {"discountPrice": 0}},
+            "offerMappings": [{"pageSlug": "url1"}, {"pageSlug": "url2"}],
+            "keyImages": [
+                {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]
+        }
+        game = product_decode.decode_product(missing_field_product)
+        assert game is None
+
+    def test_product_missing_thumbnail_returns_game(self):
+        """Test that passing invalid data will return None."""
+        test_valid_product = {
+            "title": "title",
+            "description": "description",
+            "price": {"totalPrice": {"discountPrice": 1000}},
+            "offerMappings": [{"pageSlug": "url1"}, {"pageSlug": "url2"}],
+        }
+        game = product_decode.decode_product(test_valid_product)
+        assert isinstance(game, product_decode.Game)
+        assert game.title == "title"
+        assert game.description == "description"
+        assert game.product_url == "url1"
+        assert game.price == 1000
+        assert game.thumbnail_url is None

@@ -1,8 +1,6 @@
 import logging
 import requests
 
-URL_FOR_CHECK = "https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=en-US&country=GB&allowCountries=GB"
-
 
 class ProductDecodeException(Exception):
     def __init__(self, msg: str):
@@ -87,9 +85,6 @@ def get_possible_free_products(json_data):
         logging.error("JSON data unsupported")
 
 
-"""Extract the description of the product from the product dictionary"""
-
-
 def get_description_of_product(product) -> str:
     if isinstance(product, dict):
         try:
@@ -133,7 +128,7 @@ def decode_product(product):
         thumbnail_url = get_thumbnail_of_product(product)
         return Game(title, description, price, product_url, thumbnail_url)
     except ProductDecodeException as err:
-        logging.warning(err)
+        logging.error(err)
         return None
 
 
@@ -141,7 +136,7 @@ def process_products(products):
     free_games: list[Game] = []
     for product in products:
         game_decoded = decode_product(product)
-        if game_decoded.free:
+        if game_decoded is not None and game_decoded.free:
             logging.info(f"{game_decoded.title} is free")
             free_games.append(game_decoded)
     return free_games
@@ -151,9 +146,10 @@ class EpicFreeGames:
 
     def __init__(self) -> None:
         self.free_games: list[Game] = []
+        self.URL_FOR_CHECK = "https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=en-US&country=GB&allowCountries=GB"
 
     def make_request(self):
-        response = requests.get(URL_FOR_CHECK)
+        response = requests.get(self.URL_FOR_CHECK)
         if response.ok:
             try:
                 json_data = response.json()
