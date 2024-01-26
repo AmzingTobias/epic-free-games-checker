@@ -8,21 +8,21 @@ class TestGetTitleOfProduct:
     def test_invalid_data_type_raises_exception(self):
         """Test that passing an invalid data type raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_title_of_product("Test")
+            product_decode.EpicFreeGames().get_title_of_product("Test")
 
     def test_missing_field_raises_exception(self):
         """Test that passing a dictionary with a missing 'title' field raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_title_of_product({"any": "Test"})
+            product_decode.EpicFreeGames().get_title_of_product({"any": "Test"})
 
     def test_invalid_field_value_raises_exception(self):
         """Test that passing a dictionary with an invalid 'title' field value raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_title_of_product({"title": 2})
+            product_decode.EpicFreeGames().get_title_of_product({"title": 2})
 
     def test_valid_field_returns_title(self):
         """Test that passing a dictionary with a valid 'title' field returns the correct title."""
-        assert product_decode.get_title_of_product(
+        assert product_decode.EpicFreeGames().get_title_of_product(
             {"title": "Title"}) == "Title"
 
 
@@ -32,21 +32,21 @@ class TestGetDescriptionOfProduct:
     def test_invalid_data_type_raises_exception(self):
         """Test that passing an invalid data type raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_description_of_product("Test")
+            product_decode.EpicFreeGames().get_description_of_product("Test")
 
     def test_missing_field_raises_exception(self):
         """Test that passing a dictionary with a missing 'description' field raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_description_of_product({"any": "Test"})
+            product_decode.EpicFreeGames().get_description_of_product({"any": "Test"})
 
     def test_invalid_field_value_raises_exception(self):
         """Test that passing a dictionary with an invalid 'description' field value raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_description_of_product({"description": 2})
+            product_decode.EpicFreeGames().get_description_of_product({"description": 2})
 
     def test_valid_field_returns_title(self):
         """Test that passing a dictionary with a valid 'description' field returns the correct description."""
-        assert product_decode.get_description_of_product(
+        assert product_decode.EpicFreeGames().get_description_of_product(
             {"description": "Description"}) == "Description"
 
 
@@ -56,22 +56,22 @@ class TestGetPriceOfProduct:
     def test_invalid_data_type_raises_exception(self):
         """Test that passing an invalid data type raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_price_of_product("Test")
+            product_decode.EpicFreeGames().get_price_of_product("Test")
 
     def test_missing_field_raises_exception(self):
         """Test that passing a dictionary with a missing 'price' field raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_price_of_product({"any": "Test"})
+            product_decode.EpicFreeGames().get_price_of_product({"any": "Test"})
 
     def test_invalid_field_value_raises_exception(self):
         """Test that passing a dictionary with an invalid 'price' field value raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_price_of_product(
+            product_decode.EpicFreeGames().get_price_of_product(
                 {"price": {"totalPrice": {"discountPrice": 0.2}}})
 
     def test_valid_field_returns_price(self):
         """Test that passing a dictionary with a valid 'price' field returns the correct price."""
-        assert product_decode.get_price_of_product(
+        assert product_decode.EpicFreeGames().get_price_of_product(
             {"price": {"totalPrice": {"discountPrice": 1239}}}) == 1239
 
 
@@ -81,36 +81,36 @@ class TestGetProductThumbnail:
     def test_invalid_data_type_raises_exception(self):
         """Test that passing an invalid data type raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_thumbnail_of_product("keyImages")
+            product_decode.EpicFreeGames().get_thumbnail_of_product("keyImages")
 
     def test_missing_field_raises_exception(self):
         """Test that passing a dictionary with a missing 'keyImages' field raises a ProductDecodeException."""
-        assert product_decode.get_thumbnail_of_product({"any": "Test"}) is None
+        assert product_decode.EpicFreeGames().get_thumbnail_of_product({"any": "Test"}) is None
 
     def test_invalid_field_value_raises_exception(self):
         """Test that passing a dictionary with an invalid 'keyImages' field value raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_thumbnail_of_product({"keyImages": 2})
+            product_decode.EpicFreeGames().get_thumbnail_of_product({"keyImages": 2})
 
     def test_valid_field_returns_none(self):
         """Test that passing a dictionary with a valid 'keyImages' field returns None, if no image exists with type Thumbnail."""
         sample_data = {"keyImages": [
             {"type": "Image", "url": "invalid"}]}
-        assert product_decode.get_thumbnail_of_product(
+        assert product_decode.EpicFreeGames().get_thumbnail_of_product(
             sample_data) is None
 
     def test_valid_field_returns_thumbnail(self):
         """Test that passing a dictionary with a valid 'keyImages' field returns the correct thumbnail."""
         sample_data = {"keyImages": [
             {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]}
-        assert product_decode.get_thumbnail_of_product(
+        assert product_decode.EpicFreeGames().get_thumbnail_of_product(
             sample_data) == "valid"
 
     def test_invalid_thumbnail_data_raises_exception(self):
         """Test that passing a dictionary with a valid 'keyImages' field but invalid data type is ignored."""
         sample_data = {"keyImages": [
             {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": 0}]}
-        assert product_decode.get_thumbnail_of_product(
+        assert product_decode.EpicFreeGames().get_thumbnail_of_product(
             sample_data) is None
 
 
@@ -120,28 +120,28 @@ class TestProductURL:
     def test_invalid_data_type_raises_exception(self):
         """Test that passing an invalid data type raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_product_url("url")
+            product_decode.EpicFreeGames().get_product_url("url")
 
     def test_missing_field_raises_exception(self):
         """Test that passing a dictionary with a missing 'offerMappings' field raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_product_url({"any": "Test"})
+            product_decode.EpicFreeGames().get_product_url({"any": "Test"})
 
     def test_invalid_field_value_raises_exception(self):
         """Test that passing a dictionary with an invalid 'offerMappings' field value raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_product_url({"offerMappings": 2})
+            product_decode.EpicFreeGames().get_product_url({"offerMappings": 2})
 
     def test_valid_field_returns_url(self):
         """Test that passing a dictionary with a valid 'pageSlug' field returns the first URL."""
         sample_data = {"offerMappings": [{"pageSlug": "url1"}, {"pageSlug": "url2"}]}
-        assert product_decode.get_product_url(sample_data) == "url1"
+        assert product_decode.EpicFreeGames().get_product_url(sample_data) == "url1"
 
     def test_invalid_url_data_raises_exception(self):
         """Test that passing a dictionary with a valid 'pageSlug' field but invalid data type raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
             sample_data = {"offerMappings": [{"pageSlug": 2}, {"pageSlug": "url2"}]}
-            product_decode.get_product_url(sample_data)
+            product_decode.EpicFreeGames().get_product_url(sample_data)
 
 
 class TestDecodeProduct:
@@ -157,7 +157,7 @@ class TestDecodeProduct:
             "keyImages": [
                 {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]
         }
-        game = product_decode.decode_product(test_valid_product)
+        game = product_decode.EpicFreeGames().decode_product(test_valid_product)
         assert isinstance(game, product_decode.Game)
         assert game.title == "title"
         assert game.description == "description"
@@ -167,7 +167,7 @@ class TestDecodeProduct:
 
     def test_invalid_product_data_type_returns_none(self):
         """Test that passing invalid data will return None."""
-        game = product_decode.decode_product(None)
+        game = product_decode.EpicFreeGames().decode_product(None)
         assert game is None
 
     def test_product_missing_field_returns_none(self):
@@ -179,7 +179,7 @@ class TestDecodeProduct:
             "keyImages": [
                 {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]
         }
-        game = product_decode.decode_product(missing_field_product)
+        game = product_decode.EpicFreeGames().decode_product(missing_field_product)
         assert game is None
 
     def test_product_missing_thumbnail_returns_game(self):
@@ -190,7 +190,7 @@ class TestDecodeProduct:
             "price": {"totalPrice": {"discountPrice": 1000}},
             "offerMappings": [{"pageSlug": "url1"}, {"pageSlug": "url2"}],
         }
-        game = product_decode.decode_product(test_valid_product)
+        game = product_decode.EpicFreeGames().decode_product(test_valid_product)
         assert isinstance(game, product_decode.Game)
         assert game.title == "title"
         assert game.description == "description"
@@ -205,15 +205,15 @@ class TestProcessProducts:
     def test_invalid_data_type_raises_exception(self):
         """Test that passing an invalid data type will raise an ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.process_products(None)
+            product_decode.EpicFreeGames().process_products(None)
 
     def test_list_of_invalid_products_returns_empty_list(self):
         """Tests that passing a list of invalid products returns an empty list"""
-        assert product_decode.process_products([None, None]) == []
+        assert product_decode.EpicFreeGames().process_products([None, None]) == []
 
     def test_empty_list_returns_empty_list(self):
         """Tests that passing an empty list of products returns an empty list"""
-        assert product_decode.process_products([]) == []
+        assert product_decode.EpicFreeGames().process_products([]) == []
 
     def test_valid_product_returns_game(self):
         """Tests that passing a single valid free game returns a Game with the contents decoded."""
@@ -225,7 +225,7 @@ class TestProcessProducts:
             "keyImages": [
                 {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]
         }
-        free_games = product_decode.process_products([test_free_product])
+        free_games = product_decode.EpicFreeGames().process_products([test_free_product])
         assert all(isinstance(free_game, product_decode.Game) for free_game in free_games)
         assert free_games[0].title == "title"
         assert free_games[0].description == "description"
@@ -251,7 +251,7 @@ class TestProcessProducts:
             "keyImages": [
                 {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]
         }
-        free_games = product_decode.process_products([test_paid_product, test_free_product])
+        free_games = product_decode.EpicFreeGames().process_products([test_paid_product, test_free_product])
         assert all(isinstance(free_game, product_decode.Game) for free_game in free_games)
         assert len(free_games) == 1
         assert free_games[0].title == "title"
@@ -262,7 +262,7 @@ class TestProcessProducts:
 
     def test_no_free_games_returns_empty_list(self):
         """Tests that if no free games are present, the list returned is empty."""
-        free_games = product_decode.process_products([])
+        free_games = product_decode.EpicFreeGames().process_products([])
         assert len(free_games) == 0
 
 
@@ -272,21 +272,21 @@ class TestGetProductsFromResponse:
     def test_invalid_data_type_raises_exception(self):
         """Tests that an invalid data type raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_products_from_response(None)
+            product_decode.EpicFreeGames().get_products_from_response(None)
 
     def test_data_with_missing_fields_raises_exception(self):
         """Tests that missing fields on the dictionary raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_products_from_response({})
+            product_decode.EpicFreeGames().get_products_from_response({})
 
     def test_products_field_with_invalid_data_raises_exception(self):
         """Tests that valid fields with an invalid data type raises a ProductDecodeException."""
         with pytest.raises(product_decode.ProductDecodeException):
-            product_decode.get_products_from_response({"data": {"Catalog": {"searchStore": {"elements": 0}}}})
+            product_decode.EpicFreeGames().get_products_from_response({"data": {"Catalog": {"searchStore": {"elements": 0}}}})
 
     def test_no_products_found_returns_empty_list(self):
         """Tests that an empty list found in product section returns an empty list"""
-        products = product_decode.get_products_from_response({"data": {"Catalog": {"searchStore": {"elements": []}}}})
+        products = product_decode.EpicFreeGames().get_products_from_response({"data": {"Catalog": {"searchStore": {"elements": []}}}})
         assert products == []
 
     def test_product_data_found_returns_list(self):
@@ -309,6 +309,6 @@ class TestGetProductsFromResponse:
                     {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]
             }
         ]}}}}
-        products = product_decode.get_products_from_response(raw_data)
+        products = product_decode.EpicFreeGames().get_products_from_response(raw_data)
         assert isinstance(products, list)
         assert len(products) == 2
