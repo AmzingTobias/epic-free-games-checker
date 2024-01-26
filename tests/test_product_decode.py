@@ -264,3 +264,51 @@ class TestProcessProducts:
         """Tests that if no free games are present, the list returned is empty."""
         free_games = product_decode.process_products([])
         assert len(free_games) == 0
+
+
+class TestGetProductsFromResponse:
+    """Test cases for the get_products_from_response function."""
+
+    def test_invalid_data_type_raises_exception(self):
+        """Tests that an invalid data type raises a ProductDecodeException."""
+        with pytest.raises(product_decode.ProductDecodeException):
+            product_decode.get_products_from_response(None)
+
+    def test_data_with_missing_fields_raises_exception(self):
+        """Tests that missing fields on the dictionary raises a ProductDecodeException."""
+        with pytest.raises(product_decode.ProductDecodeException):
+            product_decode.get_products_from_response({})
+
+    def test_products_field_with_invalid_data_raises_exception(self):
+        """Tests that valid fields with an invalid data type raises a ProductDecodeException."""
+        with pytest.raises(product_decode.ProductDecodeException):
+            product_decode.get_products_from_response({"data": {"Catalog": {"searchStore": {"elements": 0}}}})
+
+    def test_no_products_found_returns_empty_list(self):
+        """Tests that an empty list found in product section returns an empty list"""
+        products = product_decode.get_products_from_response({"data": {"Catalog": {"searchStore": {"elements": []}}}})
+        assert products == []
+
+    def test_product_data_found_returns_list(self):
+        """Tests that data found in product section returns a populated list."""
+        raw_data = {"data": {"Catalog": {"searchStore": {"elements": [
+            {
+                "title": "title",
+                "description": "description",
+                "price": {"totalPrice": {"discountPrice": 0}},
+                "offerMappings": [{"pageSlug": "url1"}, {"pageSlug": "url2"}],
+                "keyImages": [
+                    {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]
+            },
+            {
+                "title": "title",
+                "description": "description",
+                "price": {"totalPrice": {"discountPrice": 1000}},
+                "offerMappings": [{"pageSlug": "url1"}, {"pageSlug": "url2"}],
+                "keyImages": [
+                    {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]
+            }
+        ]}}}}
+        products = product_decode.get_products_from_response(raw_data)
+        assert isinstance(products, list)
+        assert len(products) == 2

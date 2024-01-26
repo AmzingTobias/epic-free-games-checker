@@ -77,12 +77,19 @@ def get_thumbnail_of_product(product):
 
 
 def get_products_from_response(json_data):
-    try:
-        # Access free games by looking in
-        # data -> Catalog -> searchStore -> elements
-        return json_data["data"]["Catalog"]["searchStore"]["elements"]
-    except IndexError:
-        logging.error("JSON data unsupported")
+    if isinstance(json_data, dict):
+        try:
+            # Access free games by looking in
+            # data -> Catalog -> searchStore -> elements
+            products_found = json_data["data"]["Catalog"]["searchStore"]["elements"]
+            if isinstance(products_found, list):
+                return products_found
+            else:
+                raise ProductDecodeException("Product data found is invalid type")
+        except KeyError:
+            raise ProductDecodeException("JSON data is invalid")
+    else:
+        raise ProductDecodeException("Input data invalid")
 
 
 def get_description_of_product(product) -> str:
@@ -156,9 +163,12 @@ class EpicFreeGames:
         if response.ok:
             try:
                 json_data = response.json()
-                products = get_products_from_response(json_data)
-                if products is not None:
-                    self.free_games = process_products(products)
+                try:
+                    products = get_products_from_response(json_data)
+                    if products is not None:
+                        self.free_games = process_products(products)
+                except ProductDecodeException as err:
+                    logging.error(err)
             except requests.JSONDecodeError as err:
                 logging.warning(f"Convert to json failed with: {err}")
         else:
