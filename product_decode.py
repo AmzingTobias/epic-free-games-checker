@@ -106,10 +106,19 @@ def get_description_of_product(product) -> str:
 
 
 def get_product_url(product):
+    URL_FIELD_KEY = "offerMappings"
     try:
-        return product["offerMappings"][0]["pageSlug"]
+        url_found = product["offerMappings"][0]["pageSlug"]
+        if (isinstance(url_found, str)):
+            return url_found
+        else:
+            raise ProductDecodeException(f"URL: {url_found} is invalid")
+    except TypeError:
+        raise ProductDecodeException("Invalid product input")
     except IndexError:
         raise ProductDecodeException("Could not find product page in product")
+    except KeyError:
+        raise ProductDecodeException(f"{URL_FIELD_KEY} does not exist in product data")
 
 
 def decode_product(product):

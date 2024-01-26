@@ -112,3 +112,33 @@ class TestGetProductThumbnail:
             {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": 0}]}
         assert product_decode.get_thumbnail_of_product(
             sample_data) is None
+
+
+class TestProductURL:
+    """Test cases for the get_product_url function."""
+
+    def test_invalid_data_type_raises_exception(self):
+        """Test that passing an invalid data type raises a ProductDecodeException."""
+        with pytest.raises(product_decode.ProductDecodeException):
+            product_decode.get_product_url("url")
+
+    def test_missing_field_raises_exception(self):
+        """Test that passing a dictionary with a missing 'offerMappings' field raises a ProductDecodeException."""
+        with pytest.raises(product_decode.ProductDecodeException):
+            product_decode.get_product_url({"any": "Test"})
+
+    def test_invalid_field_value_raises_exception(self):
+        """Test that passing a dictionary with an invalid 'offerMappings' field value raises a ProductDecodeException."""
+        with pytest.raises(product_decode.ProductDecodeException):
+            product_decode.get_product_url({"offerMappings": 2})
+
+    def test_valid_field_returns_url(self):
+        """Test that passing a dictionary with a valid 'pageSlug' field returns the first URL."""
+        sample_data = {"offerMappings": [{"pageSlug": "url1"}, {"pageSlug": "url2"}]}
+        assert product_decode.get_product_url(sample_data) == "url1"
+
+    def test_invalid_url_data_raises_exception(self):
+        """Test that passing a dictionary with a valid 'pageSlug' field but invalid data type raises a ProductDecodeException."""
+        with pytest.raises(product_decode.ProductDecodeException):
+            sample_data = {"offerMappings": [{"pageSlug": 2}, {"pageSlug": "url2"}]}
+            product_decode.get_product_url(sample_data)
