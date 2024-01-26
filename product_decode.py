@@ -40,15 +40,15 @@ def get_title_of_product(product) -> str:
 
 def get_price_of_product(product) -> int:
     try:
-        price_as_string = product["price"]["totalPrice"]["discountPrice"]
-        try:
-            # Convert data to int
-            return int(price_as_string)
-        except ValueError:
+        price_found = product["price"]["totalPrice"]["discountPrice"]
+        if(isinstance(price_found, int)):
+            return price_found
+        else:
             raise ProductDecodeException("Price data malformed")
-    except IndexError:
+    except KeyError:
         raise ProductDecodeException("Price does not exist in product")
-
+    except TypeError:
+        raise ProductDecodeException("Invalid product input")
 
 def get_thumbnail_of_product(product):
     try:
