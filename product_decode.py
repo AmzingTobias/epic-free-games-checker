@@ -26,11 +26,17 @@ class Game:
 
 
 def get_title_of_product(product) -> str:
-    try:
-        return product["title"]
-    except IndexError:
-        raise ProductDecodeException("Title does not exist in product")
-
+    if isinstance(product, dict):
+        try:
+            title_found = product["title"]
+            if isinstance(title_found, str):
+                return title_found
+            else:
+                raise ProductDecodeException("Title value is invalid")
+        except KeyError:
+            raise ProductDecodeException("Title does not exist in product")
+    else:
+        raise ProductDecodeException("Invalid product input")
 
 def get_price_of_product(product) -> int:
     try:
