@@ -76,7 +76,7 @@ def get_thumbnail_of_product(product):
         raise ProductDecodeException("Invalid product input")
 
 
-def get_possible_free_products(json_data):
+def get_products_from_response(json_data):
     try:
         # Access free games by looking in
         # data -> Catalog -> searchStore -> elements
@@ -156,7 +156,7 @@ class EpicFreeGames:
         if response.ok:
             try:
                 json_data = response.json()
-                products = get_possible_free_products(json_data)
+                products = get_products_from_response(json_data)
                 if products is not None:
                     self.free_games = process_products(products)
             except requests.JSONDecodeError as err:
