@@ -134,11 +134,14 @@ def decode_product(product):
 
 def process_products(products):
     free_games: list[Game] = []
-    for product in products:
-        game_decoded = decode_product(product)
-        if game_decoded is not None and game_decoded.free:
-            logging.info(f"{game_decoded.title} is free")
-            free_games.append(game_decoded)
+    try:
+        for product in products:
+            game_decoded = decode_product(product)
+            if game_decoded is not None and game_decoded.free:
+                logging.info(f"{game_decoded.title} is free")
+                free_games.append(game_decoded)
+    except TypeError:
+        raise ProductDecodeException("Products list invalid")
     return free_games
 
 

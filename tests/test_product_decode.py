@@ -197,3 +197,70 @@ class TestDecodeProduct:
         assert game.product_url == "url1"
         assert game.price == 1000
         assert game.thumbnail_url is None
+
+
+class TestProcessProducts:
+    """Test cases for the process_products function."""
+
+    def test_invalid_data_type_raises_exception(self):
+        """Test that passing an invalid data type will raise an ProductDecodeException."""
+        with pytest.raises(product_decode.ProductDecodeException):
+            product_decode.process_products(None)
+
+    def test_list_of_invalid_products_returns_empty_list(self):
+        """Tests that passing a list of invalid products returns an empty list"""
+        assert product_decode.process_products([None, None]) == []
+
+    def test_empty_list_returns_empty_list(self):
+        """Tests that passing an empty list of products returns an empty list"""
+        assert product_decode.process_products([]) == []
+
+    def test_valid_product_returns_game(self):
+        """Tests that passing a single valid free game returns a Game with the contents decoded."""
+        test_free_product = {
+            "title": "title",
+            "description": "description",
+            "price": {"totalPrice": {"discountPrice": 0}},
+            "offerMappings": [{"pageSlug": "url1"}, {"pageSlug": "url2"}],
+            "keyImages": [
+                {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]
+        }
+        free_games = product_decode.process_products([test_free_product])
+        assert all(isinstance(free_game, product_decode.Game) for free_game in free_games)
+        assert free_games[0].title == "title"
+        assert free_games[0].description == "description"
+        assert free_games[0].product_url == "url1"
+        assert free_games[0].price == 0
+        assert free_games[0].thumbnail_url == "valid"
+
+    def test_valid_products_returns_only_free_games(self):
+        """Tests that passing a list of multiple free games, only returns the free games."""
+        test_free_product = {
+            "title": "title",
+            "description": "description",
+            "price": {"totalPrice": {"discountPrice": 0}},
+            "offerMappings": [{"pageSlug": "url1"}, {"pageSlug": "url2"}],
+            "keyImages": [
+                {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]
+        }
+        test_paid_product = {
+            "title": "title",
+            "description": "description",
+            "price": {"totalPrice": {"discountPrice": 1000}},
+            "offerMappings": [{"pageSlug": "url1"}, {"pageSlug": "url2"}],
+            "keyImages": [
+                {"type": "Image", "url": "invalid"}, {"type": "Thumbnail", "url": "valid"}]
+        }
+        free_games = product_decode.process_products([test_paid_product, test_free_product])
+        assert all(isinstance(free_game, product_decode.Game) for free_game in free_games)
+        assert len(free_games) == 1
+        assert free_games[0].title == "title"
+        assert free_games[0].description == "description"
+        assert free_games[0].product_url == "url1"
+        assert free_games[0].price == 0
+        assert free_games[0].thumbnail_url == "valid"
+
+    def test_no_free_games_returns_empty_list(self):
+        """Tests that if no free games are present, the list returned is empty."""
+        free_games = product_decode.process_products([])
+        assert len(free_games) == 0
