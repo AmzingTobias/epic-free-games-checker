@@ -73,12 +73,19 @@ def get_possible_free_products(json_data):
         logging.error("JSON data unsupported")
 
 
+"""Extract the description of the product from the product dictionary"""
 def get_description_of_product(product) -> str:
-    try:
-        return product["description"]
-    except IndexError:
-        raise ProductDecodeException("Description does not exist in product")
-
+    if  isinstance(product, dict):
+        try:
+            description_found = product["description"]
+            if isinstance(description_found, str):
+                return description_found
+            else:
+                raise ProductDecodeException("Description value is invalid")
+        except KeyError:
+            raise ProductDecodeException("Description does not exist in product")
+    else:
+        raise ProductDecodeException("Invalid product input")
 
 def get_product_url(product):
     try:
