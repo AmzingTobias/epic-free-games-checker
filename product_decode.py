@@ -25,8 +25,7 @@ class Game:
         self.thumbnail_url = thumbnail_url
 
     def display(self):
-        print(f"{self.title}\n{self.description}\n{
-              self.product_url}\n{self.thumbnail_url}")
+        print(f"Title:{self.title}\nDescription: {self.description}\nProduct page: {self.product_url}\nThumbnail: {self.thumbnail_url}")
 
 
 class EpicFreeGames:
@@ -50,8 +49,7 @@ class EpicFreeGames:
             except requests.JSONDecodeError as err:
                 logging.warning(f"Convert to json failed with: {err}")
         else:
-            logging.warning(f"Request failed with code: {
-                            response.status_code}")
+            logging.warning(f"Request failed with code: {response.status_code}")
 
     @staticmethod
     def get_title_of_product(product) -> str:
